@@ -3,10 +3,11 @@
 #include <stack>
 #include <iostream>
 
+
 std::map<std::pair<size_t, char>, size_t> states = {
-	{ { 0, 'a' }, 1 },
-	{ { 1, 'b' }, 2 },
-	{ { 2, 'c' }, 3 }
+	{ { 0, 'k' }, 1 },
+	{ { 1, 'o' }, 2 },
+	{ { 2, 't' }, 3 }
 };
 
 bool scanDriver(const std::string& str)
@@ -27,7 +28,7 @@ bool scanDriver(const std::string& str)
 
 int main()
 {
-	std::cout << scanDriver("abc") << std::endl;
-	std::cout << scanDriver("abcc") << std::endl;
+	std::cout << scanDriver("kot") << std::endl;
+	std::cout << scanDriver("kotek") << std::endl;
 	return 0;
 }

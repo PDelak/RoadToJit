@@ -1,33 +1,46 @@
 #include <string>
-#include <map>
-#include <stack>
 #include <iostream>
+#include <algorithm>
 
-std::map<std::pair<size_t, char>, size_t> states = {
-	{{0, 'a'}, 1},
-	{{1, 'b'}, 2},
-	{{2, 'c'}, 3}
+struct scanner_state
+{
+	std::string::const_iterator current;
+	std::string::const_iterator end;
+
+	bool eof() const { return current == end; }
+
+	scanner_state(const std::string& s):current(s.begin()), end(s.end()) {}
+
 };
 
-bool scan(const std::string& str)
+bool isbracket(char c) {
+	return c == '{' || c == '}';
+}
+
+std::string getNextToken(scanner_state& state)
 {
-	std::stack<size_t> st;
-	st.push(0);
-	size_t state = 0;
-	for (auto e : str) {
-		state = st.top();
-		auto it = states.find(std::make_pair(state, e));		
-		if (it == states.end()) { st.pop(); break;}
-		st.pop();
-		st.push(it->second);
+	if (!state.eof() && isspace(*state.current)) {
+		auto token_end = std::find_if_not(state.current, state.end, isspace);
+		state.current = token_end;
 	}
-	if (!st.empty() && st.top() == 3) return true;
-	return false;
+	if (!state.eof() && isalpha(*state.current)) {
+		auto token_end = std::find_if_not(state.current, state.end, isalpha);
+		std::string token = std::string(state.current, token_end);
+		state.current = token_end;		
+		return token;
+	}
+	if (!state.eof() && isbracket(*state.current)) {
+		auto token_end = state.current + 1;
+		std::string token = std::string(state.current, token_end);
+		state.current = state.current + 1;
+		return token;
+	}
+	return "";
 }
 
 int main()
 {
-	std::cout << scan("abc") << std::endl;
-	std::cout << scan("abcc") << std::endl;
+	std::string input = "program {}";
+	while ()
 	return 0;
 }

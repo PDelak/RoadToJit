@@ -2,19 +2,20 @@
 #include <algorithm>
 #include <iostream>
 
-struct parsing_state
+
+struct scanning_state
 {
-	parsing_state(const std::string& input) :current(input.begin()), end(input.end()) {}
+	scanning_state(const std::string& input) :current(input.begin()), end(input.end()) {}
 	std::string::const_iterator current;
 	std::string::const_iterator end;
 	bool eof() const { return current == end; }
 };
 
 bool isbracket(char c) {
-	return c == '{' || c == '}';
+	return c == '(' || c == ')';
 }
 
-std::string getNextToken(parsing_state& state)
+std::string getNextToken(scanning_state& state)
 {
 	if (!state.eof() && isspace(*state.current)) {
 		auto end = std::find_if_not(state.current, state.end, isspace);
@@ -27,6 +28,14 @@ std::string getNextToken(parsing_state& state)
 
 		return token;
 	}
+	if (!state.eof() && isdigit(*state.current)) {
+		auto token_end = std::find_if_not(state.current, state.end, isdigit);
+		std::string token = std::string(state.current, token_end);
+		state.current = token_end;
+
+		return token;
+	}
+
 	if (!state.eof() && isbracket(*state.current)) {
 		auto token_end = state.current + 1;
 		std::string token = std::string(state.current, token_end);
@@ -38,8 +47,8 @@ std::string getNextToken(parsing_state& state)
 
 int main()
 {
-	std::string input = "    prog ram{ } ";
-	parsing_state state(input);
+	std::string input = "    (1) ";
+	scanning_state state(input);
 	std::string token = getNextToken(state);
 	while(!token.empty()) {
 		std::cout << "token:" << token << std::endl;
